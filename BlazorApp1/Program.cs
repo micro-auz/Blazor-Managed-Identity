@@ -103,7 +103,14 @@ if (builder.Environment.IsDevelopment())
 }
 
 
+if (builder.Environment.IsProduction())
+{
+    System.Diagnostics.Debug.WriteLine("This is production!");
 
+    builder.Configuration.AddAzureKeyVault(
+        new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
+        new DefaultAzureCredential());
+}
 
 
 
