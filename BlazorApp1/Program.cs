@@ -1,6 +1,7 @@
 using Azure.Core;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using BlazorApp1;
 using BlazorApp1.Data;
 using DataLibrary;
 using Microsoft.AspNetCore.Components;
@@ -20,6 +21,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddSingleton<IDataAccessMySQL, DataAccessMySQL>();
+builder.Services.AddSingleton<IConnectionStringBuilder, ConnectionStringBuilder>();
 builder.Configuration.GetSection("ConnectionStrings");
 
 
@@ -30,7 +32,7 @@ builder.Configuration.GetSection("ConnectionStrings");
 
 
 
-/*Gettting the Token
+/*Gettting the Token*/
 var sqlServerTokenProvider = new AzureServiceTokenProvider();
 var SqlAccessToken = await sqlServerTokenProvider.GetAccessTokenAsync("https://ossrdbms-aad.database.windows.net");
 
@@ -73,7 +75,6 @@ using (var conn = new MySqlConnection(mySqlConnectionStringBuilder.ConnectionStr
 System.Diagnostics.Debug.WriteLine("The versions is Azure Database for Mysql is:" + responseMessage);
 
 System.Diagnostics.Debug.WriteLine("The MySQL connectionstring is: " + mySqlConnectionStringBuilder.ConnectionString);
-*/
 
 
 
@@ -101,19 +102,6 @@ if (builder.Environment.IsDevelopment())
         new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
         new DefaultAzureCredential());
 }
-
-
-if (builder.Environment.IsProduction())
-{
-    System.Diagnostics.Debug.WriteLine("This is production!");
-
-    builder.Configuration.AddAzureKeyVault(
-        new Uri($"https://{builder.Configuration["KeyVaultName"]}.vault.azure.net/"),
-        new DefaultAzureCredential());
-}
-
-
-
 
 /*
 //the managfed identity client id

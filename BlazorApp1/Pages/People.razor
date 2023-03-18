@@ -3,7 +3,10 @@
 @using AuzBlazorServerApp1.Models
 @using Microsoft.Extensions.Configuration
 @inject IDataAccessMySQL _data
-@inject IConfiguration _config
+
+@inject IConnectionStringBuilder _connection
+
+@inject IWebHostEnvironment Env
 
 
 <h3>People</h3>
@@ -31,7 +34,9 @@ else
 
     private async Task InsertData()
     {
-        var connectionString = _config.GetValue<string>("SqlConnectionString");
+        //var connectionString = _config.GetValue<string>("SqlConnectionString");
+
+        var connectionString = await _connection.GetConnectionString(Env.IsProduction());
 
         string sql = "insert into people (FirstName, LastName) values (@FirstName, @LastName);";
 
@@ -42,7 +47,8 @@ else
 
     private async Task UpdateData()
     {
-        var connectionString = _config.GetValue<string>("SqlConnectionString");
+        //var connectionString = _config.GetValue<string>("SqlConnectionString");
+        var connectionString = await _connection.GetConnectionString(Env.IsProduction());
 
         string sql = "update people set FirstName = @FirstName where LastName = @LastName";
 
@@ -53,7 +59,8 @@ else
 
     private async Task DeleteData()
     {
-        var connectionString = _config.GetValue<string>("SqlConnectionString");
+        //var connectionString = _config.GetValue<string>("SqlConnectionString");
+        var connectionString = await _connection.GetConnectionString(Env.IsProduction());
 
         string sql = "delete from people where LastName = @LastName";
 
@@ -67,8 +74,12 @@ else
         string sql = "select * from people";
         //people = await _data.LoadData<Person, dynamic>(sql, new { }, _config.GetConnectionString("default"));
 
-        var connectionString = _config.GetValue<string>("SqlConnectionString");
+        //var connectionString = _config.GetValue<string>("SqlConnectionString");
+        var connectionString = await _connection.GetConnectionString(Env.IsProduction());
+
+        System.Diagnostics.Debug.WriteLine("This is the connectionString2:" + connectionString);
+
         //System.Diagnostics.Debug.WriteLine("This is the people connectionString:" + connectionString);
         people = await _data.LoadData<Person, dynamic>(sql, new { }, connectionString);
-    }
+}
 }
