@@ -4,5 +4,7 @@
     {
         Task<string> GetConnectionString(bool isProduction);
 
+        Task<string> GetConnectionString2(bool isProduction);
+
     }
 }
